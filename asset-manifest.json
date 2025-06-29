@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/overwatch-counter-picks/static/css/main.bc946bee.css",
+    "main.js": "/overwatch-counter-picks/static/js/main.e6cc6d16.js",
+    "index.html": "/overwatch-counter-picks/index.html",
+    "main.bc946bee.css.map": "/overwatch-counter-picks/static/css/main.bc946bee.css.map",
+    "main.e6cc6d16.js.map": "/overwatch-counter-picks/static/js/main.e6cc6d16.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bc946bee.css",
+    "static/js/main.e6cc6d16.js"
+  ]
+}
