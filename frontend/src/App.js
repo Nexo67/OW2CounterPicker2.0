@@ -1,87 +1,203 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import { heroesData, counterData, translations } from './data';
 import Components from './components';
 
-const { HeroGrid, Header, RoleFilter, TabNavigation } = Components;
-
-// Mock data for all Overwatch 2 heroes
-const heroesData = [
-  { name: "Ana", role: "Support", image: "https://i.imgur.com/isyo8dm.png" },
-  { name: "Ashe", role: "Damage", image: "https://i.imgur.com/Dt9yFlZ.png" },
-  { name: "Baptiste", role: "Support", image: "https://i.imgur.com/NFoVTB1.png" },
-  { name: "Bastion", role: "Damage", image: "https://i.imgur.com/16QTi3l.png" },
-  { name: "Brigitte", role: "Support", image: "https://i.imgur.com/DRJAOvU.png" },
-  { name: "Cassidy", role: "Damage", image: "https://i.imgur.com/44kC7Wp.png" },
-  { name: "D.Va", role: "Tank", image: "https://i.imgur.com/fs6L7r2.png" },
-  { name: "Doomfist", role: "Tank", image: "https://i.imgur.com/u3tZVBp.png" },
-  { name: "Echo", role: "Damage", image: "https://i.imgur.com/kkb1KwH.png" },
-  { name: "Freja", role: "Damage", image: "https://i.imgur.com/S5r6NHM.png" },
-  { name: "Genji", role: "Damage", image: "https://i.imgur.com/F5HDCSr.png" },
-  { name: "Hanzo", role: "Damage", image: "https://i.imgur.com/QopdlyF.png" },
-  { name: "Hazard", role: "Tank", image: "https://i.imgur.com/ll0Z5E4.png" },
-  { name: "Illari", role: "Support", image: "https://i.imgur.com/QiVFjmh.png" },
-  { name: "Junker Queen", role: "Tank", image: "https://i.imgur.com/qk57SjY.png" },
-  { name: "Junkrat", role: "Damage", image: "https://i.imgur.com/15h0XVK.png" },
-  { name: "Juno", role: "Support", image: "https://i.imgur.com/uBcOgMV.png" },
-  { name: "Kiriko", role: "Support", image: "https://i.imgur.com/SjBOEML.png" },
-  { name: "Lifeweaver", role: "Support", image: "https://i.imgur.com/MyUZbnB.png" },
-  { name: "Lúcio", role: "Support", image: "https://i.imgur.com/HVEad0a.png" },
-  { name: "Mauga", role: "Tank", image: "https://i.imgur.com/hADiTTW.png" },
-  { name: "Mei", role: "Damage", image: "https://i.imgur.com/fk4dOD3.png" },
-  { name: "Mercy", role: "Support", image: "https://i.imgur.com/eYENwgY.png" },
-  { name: "Moira", role: "Support", image: "https://i.imgur.com/NzALvVG.png" },
-  { name: "Orisa", role: "Tank", image: "https://i.imgur.com/iLHsRuI.png" },
-  { name: "Pharah", role: "Damage", image: "https://i.imgur.com/7pPzER6.png" },
-  { name: "Ramattra", role: "Tank", image: "https://i.imgur.com/D865c06.png" },
-  { name: "Reaper", role: "Damage", image: "https://i.imgur.com/ut4TVun.png" },
-  { name: "Reinhardt", role: "Tank", image: "https://i.imgur.com/NqeRUVl.png" },
-  { name: "Roadhog", role: "Tank", image: "https://i.imgur.com/Fn3cjMl.png" },
-  { name: "Sigma", role: "Tank", image: "https://i.imgur.com/bAOUVqW.png" },
-  { name: "Sojourn", role: "Damage", image: "https://i.imgur.com/hKQgOlB.png" },
-  { name: "Soldier: 76", role: "Damage", image: "https://i.imgur.com/s96W24d.png" },
-  { name: "Sombra", role: "Damage", image: "https://i.imgur.com/p38Fiw1.png" },
-  { name: "Symmetra", role: "Damage", image: "https://i.imgur.com/swEkLNZ.png" },
-  { name: "Torbjörn", role: "Damage", image: "https://i.imgur.com/zexhWW4.png" },
-  { name: "Tracer", role: "Damage", image: "https://i.imgur.com/5nxK2mJ.png" },
-  { name: "Venture", role: "Damage", image: "https://i.imgur.com/q44tsj7.png" },
-  { name: "Widowmaker", role: "Damage", image: "https://i.imgur.com/swnCSAr.png" },
-  { name: "Winston", role: "Tank", image: "https://i.imgur.com/pLOv5Ja.png" },
-  { name: "Wrecking Ball", role: "Tank", image: "https://i.imgur.com/rucw5fm.png" },
-  { name: "Zarya", role: "Tank", image: "https://i.imgur.com/DmJuOnf.png" },
-  { name: "Zenyatta", role: "Support", image: "https://i.imgur.com/4JTeCq9.png" }
-];
+const { Header, TabNavigation, RoleFilter, HeroGrid, CounterDisplay, TeamBuilder } = Components;
 
 function App() {
+  const [language, setLanguage] = useState('en');
   const [activeTab, setActiveTab] = useState('1v1');
   const [selectedRole, setSelectedRole] = useState('All');
   const [selectedHero, setSelectedHero] = useState(null);
+  const [selectedEnemyTeam, setSelectedEnemyTeam] = useState([]);
+  const [showCounters, setShowCounters] = useState(false);
+  const [recommendedTeam, setRecommendedTeam] = useState(null);
 
-  const filteredHeroes = selectedRole === 'All' 
-    ? heroesData 
-    : heroesData.filter(hero => hero.role === selectedRole);
+  const t = translations[language];
 
-  const handleHeroSelect = (hero) => {
-    setSelectedHero(hero);
-    // Here you could add logic to show counter picks
-    console.log(`Selected hero: ${hero.name} (${hero.role})`);
+  // Filter heroes based on selected role
+  const getFilteredHeroes = () => {
+    let filtered = selectedRole === 'All' 
+      ? [...heroesData] 
+      : heroesData.filter(hero => hero.role === selectedRole);
+    
+    // Sort alphabetically
+    if (selectedRole === 'All') {
+      // Global A-Z regardless of class
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      // Alphabetically within role
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    
+    return filtered;
   };
+
+  // Handle hero selection for 1v1
+  const handleHeroSelect = (hero) => {
+    if (activeTab === '1v1') {
+      setSelectedHero(hero);
+      setShowCounters(true);
+    }
+  };
+
+  // Handle enemy team selection for 5v5
+  const handleEnemyTeamSelect = (hero) => {
+    if (activeTab === '5v5') {
+      if (selectedEnemyTeam.find(h => h.name === hero.name)) {
+        // Remove hero if already selected
+        setSelectedEnemyTeam(prev => prev.filter(h => h.name !== hero.name));
+      } else if (selectedEnemyTeam.length < 5) {
+        // Add hero if less than 5 selected
+        setSelectedEnemyTeam(prev => [...prev, hero]);
+      }
+    }
+  };
+
+  // Generate counter team for 5v5
+  const generateCounterTeam = () => {
+    if (selectedEnemyTeam.length === 0) return;
+
+    const allCounters = [];
+    
+    // Collect all possible counters for the enemy team
+    selectedEnemyTeam.forEach(enemy => {
+      const counters = counterData[enemy.name] || [];
+      counters.forEach(counter => {
+        const counterHero = heroesData.find(h => h.name === counter.name);
+        if (counterHero) {
+          allCounters.push({
+            ...counterHero,
+            effectiveness: counter.effectiveness,
+            reason: counter.reason
+          });
+        }
+      });
+    });
+
+    // Count counter frequency and effectiveness
+    const counterFrequency = {};
+    allCounters.forEach(counter => {
+      if (!counterFrequency[counter.name]) {
+        counterFrequency[counter.name] = {
+          ...counter,
+          count: 0,
+          totalEffectiveness: 0
+        };
+      }
+      counterFrequency[counter.name].count++;
+      counterFrequency[counter.name].totalEffectiveness += counter.effectiveness;
+    });
+
+    // Sort by frequency and effectiveness
+    const sortedCounters = Object.values(counterFrequency)
+      .sort((a, b) => {
+        const aScore = a.count * 2 + a.totalEffectiveness;
+        const bScore = b.count * 2 + b.totalEffectiveness;
+        return bScore - aScore;
+      });
+
+    // Build balanced team (1 Tank, 2 DPS, 2 Support)
+    const team = {
+      tank: null,
+      damage: [],
+      support: []
+    };
+
+    // Select best tank
+    const tankCounters = sortedCounters.filter(c => c.role === 'Tank');
+    if (tankCounters.length > 0) {
+      team.tank = tankCounters[0];
+    }
+
+    // Select best damage heroes (2)
+    const damageCounters = sortedCounters.filter(c => c.role === 'Damage');
+    team.damage = damageCounters.slice(0, 2);
+
+    // Select best support heroes (2)
+    const supportCounters = sortedCounters.filter(c => c.role === 'Support');
+    team.support = supportCounters.slice(0, 2);
+
+    // Fill missing roles with strong general picks if needed
+    if (!team.tank && heroesData.find(h => h.name === 'Reinhardt')) {
+      team.tank = heroesData.find(h => h.name === 'Reinhardt');
+    }
+    if (team.damage.length < 2) {
+      const fallbacks = ['Soldier: 76', 'Tracer', 'Cassidy'].map(name => 
+        heroesData.find(h => h.name === name)
+      ).filter(h => h && !team.damage.find(d => d.name === h.name));
+      team.damage.push(...fallbacks.slice(0, 2 - team.damage.length));
+    }
+    if (team.support.length < 2) {
+      const fallbacks = ['Ana', 'Mercy', 'Lucio'].map(name => 
+        heroesData.find(h => h.name === name)
+      ).filter(h => h && !team.support.find(s => s.name === h.name));
+      team.support.push(...fallbacks.slice(0, 2 - team.support.length));
+    }
+
+    setRecommendedTeam(team);
+    setShowCounters(true);
+  };
+
+  // Clear selections
+  const clearSelections = () => {
+    if (activeTab === '1v1') {
+      setSelectedHero(null);
+    } else {
+      setSelectedEnemyTeam([]);
+      setRecommendedTeam(null);
+    }
+    setShowCounters(false);
+  };
+
+  // Reset when switching tabs
+  useEffect(() => {
+    clearSelections();
+  }, [activeTab]);
 
   return (
     <div className="app">
       <div className="background-gradient">
         <div className="container">
-          <Header />
-          <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-          <RoleFilter selectedRole={selectedRole} setSelectedRole={setSelectedRole} />
+          <Header language={language} setLanguage={setLanguage} t={t} />
+          <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} t={t} />
+          
+          {activeTab === '5v5' && (
+            <TeamBuilder
+              selectedEnemyTeam={selectedEnemyTeam}
+              onGenerateCounters={generateCounterTeam}
+              onClearTeam={clearSelections}
+              t={t}
+            />
+          )}
+          
+          <RoleFilter selectedRole={selectedRole} setSelectedRole={setSelectedRole} t={t} />
           
           <div className="hero-selection-section">
-            <h2 className="section-title">Select Enemy Hero</h2>
+            <h2 className="section-title">
+              {activeTab === '1v1' ? t.selectEnemyHero : t.selectEnemyTeam}
+            </h2>
             <HeroGrid 
-              heroes={filteredHeroes} 
-              onHeroSelect={handleHeroSelect}
+              heroes={getFilteredHeroes()} 
+              onHeroSelect={activeTab === '1v1' ? handleHeroSelect : handleEnemyTeamSelect}
               selectedHero={selectedHero}
+              selectedEnemyTeam={selectedEnemyTeam}
+              activeTab={activeTab}
+              t={t}
             />
           </div>
+
+          {showCounters && (
+            <CounterDisplay
+              activeTab={activeTab}
+              selectedHero={selectedHero}
+              recommendedTeam={recommendedTeam}
+              counterData={counterData}
+              language={language}
+              t={t}
+            />
+          )}
         </div>
       </div>
     </div>
