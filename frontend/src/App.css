@@ -576,6 +576,206 @@
   border: 2px solid #2ECC71;
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #2d1b4e 0%, #4a2b6b 100%);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  border: 2px solid rgba(255, 107, 53, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 28px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.modal-close:hover {
+  color: #ff6b35;
+  transform: scale(1.1);
+}
+
+.modal-hero-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.modal-hero-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-hero-info h2 {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.modal-hero-role {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-hero-details {
+  margin-bottom: 25px;
+}
+
+.hero-strengths-section, .hero-weaknesses-section {
+  margin-bottom: 20px;
+}
+
+.hero-strengths-section h3, .hero-weaknesses-section h3 {
+  color: #ff6b35;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.hero-strengths-section p, .hero-weaknesses-section p {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.hero-counters-preview {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+.hero-counters-preview h3 {
+  color: #ff6b35;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.counters-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.counter-preview-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.counter-name {
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.counter-effectiveness {
+  color: #ff6b35;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.more-counters {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.view-counters-btn, .select-for-team-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  min-width: 140px;
+}
+
+.view-counters-btn {
+  background: #ff6b35;
+  color: white;
+}
+
+.view-counters-btn:hover {
+  background: #e55a2b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+}
+
+.select-for-team-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.select-for-team-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.select-for-team-btn.selected {
+  background: #2ECC71;
+  color: white;
+  border-color: #2ECC71;
+}
+
+.select-for-team-btn.selected:hover {
+  background: #27AE60;
+  border-color: #27AE60;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-title {
