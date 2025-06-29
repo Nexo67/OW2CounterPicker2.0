@@ -97,7 +97,7 @@ const TeamBuilder = ({ selectedEnemyTeam, onGenerateCounters, onClearTeam, t }) 
   );
 };
 
-const HeroCard = ({ hero, onSelect, isSelected, isSelectedInTeam, activeTab, t }) => {
+const HeroCard = ({ hero, onHeroClick, isSelected, isSelectedInTeam, activeTab, t, language }) => {
   const getRoleColor = (role) => {
     switch (role) {
       case 'Tank': return '#4A90E2';
@@ -107,12 +107,10 @@ const HeroCard = ({ hero, onSelect, isSelected, isSelectedInTeam, activeTab, t }
     }
   };
 
-  const isDisabled = activeTab === '5v5' && isSelectedInTeam && !isSelectedInTeam.find(h => h.name === hero.name);
-
   return (
     <div 
-      className={`hero-card ${isSelected ? 'selected' : ''} ${isSelectedInTeam ? 'team-selected' : ''} ${isDisabled ? 'disabled' : ''}`}
-      onClick={() => onSelect(hero)}
+      className={`hero-card ${isSelected ? 'selected' : ''} ${isSelectedInTeam ? 'team-selected' : ''}`}
+      onClick={() => onHeroClick(hero)}
     >
       <div className="hero-image-container">
         <img 
@@ -125,10 +123,10 @@ const HeroCard = ({ hero, onSelect, isSelected, isSelectedInTeam, activeTab, t }
           <span className="hero-name">{hero.name}</span>
           <div className="hero-info">
             <div className="hero-strengths">
-              <strong>{t.strengths}:</strong> {hero.strengths}
+              <strong>{t.strengths}:</strong> {hero.strengths[language]}
             </div>
             <div className="hero-weaknesses">
-              <strong>{t.weaknesses}:</strong> {hero.weaknesses}
+              <strong>{t.weaknesses}:</strong> {hero.weaknesses[language]}
             </div>
           </div>
         </div>
@@ -137,26 +135,110 @@ const HeroCard = ({ hero, onSelect, isSelected, isSelectedInTeam, activeTab, t }
         className="hero-role-bar"
         style={{ backgroundColor: getRoleColor(hero.role) }}
       >
-        <span className="hero-role">{hero.role}</span>
+        <span className="hero-role">{t[hero.role.toLowerCase()]}</span>
       </div>
     </div>
   );
 };
 
-const HeroGrid = ({ heroes, onHeroSelect, selectedHero, selectedEnemyTeam, activeTab, t }) => {
+const HeroGrid = ({ heroes, onHeroClick, selectedHero, selectedEnemyTeam, activeTab, t, language }) => {
   return (
     <div className="hero-grid">
       {heroes.map(hero => (
         <HeroCard
           key={hero.name}
           hero={hero}
-          onSelect={onHeroSelect}
+          onHeroClick={onHeroClick}
           isSelected={selectedHero?.name === hero.name}
           isSelectedInTeam={selectedEnemyTeam?.find(h => h.name === hero.name)}
           activeTab={activeTab}
           t={t}
+          language={language}
         />
       ))}
+    </div>
+  );
+};
+
+const HeroModal = ({ hero, language, t, activeTab, onClose, onViewCounters, onSelectForTeam, counterData, isInSelectedTeam }) => {
+  const getRoleColor = (role) => {
+    switch (role) {
+      case 'Tank': return '#4A90E2';
+      case 'Damage': return '#E74C3C';
+      case 'Support': return '#2ECC71';
+      default: return '#95A5A6';
+    }
+  };
+
+  const heroCounters = counterData[hero.name] || [];
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>×</button>
+        
+        <div className="modal-hero-header">
+          <img src={hero.image} alt={hero.name} className="modal-hero-image" />
+          <div className="modal-hero-info">
+            <h2 className="modal-hero-name">{hero.name}</h2>
+            <div 
+              className="modal-hero-role"
+              style={{ backgroundColor: getRoleColor(hero.role) }}
+            >
+              {t[hero.role.toLowerCase()]}
+            </div>
+          </div>
+        </div>
+
+        <div className="modal-hero-details">
+          <div className="hero-strengths-section">
+            <h3>{t.strengths}</h3>
+            <p>{hero.strengths[language]}</p>
+          </div>
+          
+          <div className="hero-weaknesses-section">
+            <h3>{t.weaknesses}</h3>
+            <p>{hero.weaknesses[language]}</p>
+          </div>
+
+          {heroCounters.length > 0 && (
+            <div className="hero-counters-preview">
+              <h3>{t.counterPicksFor} {hero.name}</h3>
+              <div className="counters-preview-list">
+                {heroCounters.slice(0, 3).map(counter => (
+                  <div key={counter.name} className="counter-preview-item">
+                    <span className="counter-name">{counter.name}</span>
+                    <span className="counter-effectiveness">{counter.effectiveness}/10</span>
+                  </div>
+                ))}
+                {heroCounters.length > 3 && (
+                  <span className="more-counters">+{heroCounters.length - 3} more...</span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="modal-actions">
+          {activeTab === '1v1' && (
+            <button 
+              className="view-counters-btn"
+              onClick={() => onViewCounters(hero)}
+            >
+              {t.viewCounters}
+            </button>
+          )}
+          
+          {activeTab === '5v5' && (
+            <button 
+              className={`select-for-team-btn ${isInSelectedTeam ? 'selected' : ''}`}
+              onClick={() => onSelectForTeam(hero)}
+            >
+              {isInSelectedTeam ? '✓ Seleccionado' : (language === 'es' ? 'Agregar al Equipo' : 'Add to Team')}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -184,7 +266,7 @@ const CounterDisplay = ({ activeTab, selectedHero, recommendedTeam, counterData,
                 </div>
               </div>
               <div className="counter-reason">
-                <strong>{t.whyEffective}</strong> {counter.reason}
+                <strong>{t.whyEffective}</strong> {counter.reason[language]}
               </div>
             </div>
           ))}
@@ -206,7 +288,11 @@ const CounterDisplay = ({ activeTab, selectedHero, recommendedTeam, counterData,
                   <img src={recommendedTeam.tank.image} alt={recommendedTeam.tank.name} />
                   <span>{recommendedTeam.tank.name}</span>
                   {recommendedTeam.tank.reason && (
-                    <div className="recommendation-reason">{recommendedTeam.tank.reason}</div>
+                    <div className="recommendation-reason">
+                      {typeof recommendedTeam.tank.reason === 'object' 
+                        ? recommendedTeam.tank.reason[language] 
+                        : recommendedTeam.tank.reason}
+                    </div>
                   )}
                 </div>
               )}
@@ -221,7 +307,11 @@ const CounterDisplay = ({ activeTab, selectedHero, recommendedTeam, counterData,
                   <img src={hero.image} alt={hero.name} />
                   <span>{hero.name}</span>
                   {hero.reason && (
-                    <div className="recommendation-reason">{hero.reason}</div>
+                    <div className="recommendation-reason">
+                      {typeof hero.reason === 'object' 
+                        ? hero.reason[language] 
+                        : hero.reason}
+                    </div>
                   )}
                 </div>
               ))}
@@ -236,7 +326,11 @@ const CounterDisplay = ({ activeTab, selectedHero, recommendedTeam, counterData,
                   <img src={hero.image} alt={hero.name} />
                   <span>{hero.name}</span>
                   {hero.reason && (
-                    <div className="recommendation-reason">{hero.reason}</div>
+                    <div className="recommendation-reason">
+                      {typeof hero.reason === 'object' 
+                        ? hero.reason[language] 
+                        : hero.reason}
+                    </div>
                   )}
                 </div>
               ))}
@@ -257,6 +351,7 @@ const Components = {
   TeamBuilder,
   HeroCard,
   HeroGrid,
+  HeroModal,
   CounterDisplay
 };
 
