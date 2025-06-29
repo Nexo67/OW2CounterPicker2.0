@@ -43,12 +43,17 @@
   color: white;
   font-size: 14px;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.language-selector img {
-  width: 20px;
-  height: 15px;
-  border-radius: 2px;
+.language-selector:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.flag-icon {
+  font-size: 16px;
 }
 
 .main-title {
@@ -106,6 +111,111 @@
 .tab:hover:not(.active) {
   background: rgba(255, 255, 255, 0.2);
   color: white;
+}
+
+/* Team Builder Styles */
+.team-builder {
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.team-title {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.selected-team {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.selected-hero-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 80px;
+}
+
+.mini-hero-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  object-fit: cover;
+  margin-bottom: 4px;
+}
+
+.mini-hero-name {
+  color: white;
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.empty-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 66px;
+  height: 78px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.team-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.generate-counters-btn, .clear-team-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.generate-counters-btn {
+  background: #ff6b35;
+  color: white;
+}
+
+.generate-counters-btn:hover:not(:disabled) {
+  background: #e55a2b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+}
+
+.clear-team-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.clear-team-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.generate-counters-btn:disabled, .clear-team-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Role Filter */
@@ -213,6 +323,17 @@
   box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
 }
 
+.hero-card.team-selected {
+  border-color: #2ECC71;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+
+.hero-card.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .hero-image-container {
   position: relative;
   width: 100%;
@@ -239,10 +360,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  padding: 20px 12px 12px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+  padding: 40px 12px 12px;
   opacity: 0;
   transition: all 0.3s ease;
+  color: white;
+  font-size: 11px;
 }
 
 .hero-card:hover .hero-overlay {
@@ -256,6 +379,20 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
   display: block;
   text-align: center;
+  margin-bottom: 8px;
+}
+
+.hero-info {
+  text-align: left;
+  line-height: 1.3;
+}
+
+.hero-strengths, .hero-weaknesses {
+  margin-bottom: 4px;
+}
+
+.hero-strengths strong, .hero-weaknesses strong {
+  color: #ff6b35;
 }
 
 .hero-role-bar {
@@ -270,6 +407,173 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Counter Display Styles */
+.counter-display {
+  margin-top: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.counter-title {
+  color: #ff6b35;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.counter-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.counter-hero-info {
+  margin-bottom: 15px;
+}
+
+.counter-hero-name {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.effectiveness-bar {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.effectiveness-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35, #ff8c42);
+  transition: width 0.5s ease;
+  border-radius: 10px;
+}
+
+.effectiveness-text {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.counter-reason {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.counter-reason strong {
+  color: #ff6b35;
+}
+
+/* Recommended Team Styles */
+.recommended-team {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.team-role-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.role-header {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tank-header {
+  color: #4A90E2;
+}
+
+.damage-header {
+  color: #E74C3C;
+}
+
+.support-header {
+  color: #2ECC71;
+}
+
+.role-heroes {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.recommended-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  min-width: 120px;
+  backdrop-filter: blur(10px);
+}
+
+.recommended-hero img {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.recommended-hero span {
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.recommendation-reason {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.recommended-hero.tank {
+  border: 2px solid #4A90E2;
+}
+
+.recommended-hero.damage {
+  border: 2px solid #E74C3C;
+}
+
+.recommended-hero.support {
+  border: 2px solid #2ECC71;
 }
 
 /* Responsive Design */
@@ -306,6 +610,24 @@
     padding: 8px 16px;
     font-size: 12px;
   }
+
+  .selected-team {
+    gap: 8px;
+  }
+
+  .team-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .counters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .role-heroes {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 @media (max-width: 480px) {
@@ -321,5 +643,13 @@
   .tab {
     padding: 10px 16px;
     font-size: 14px;
+  }
+
+  .counter-display {
+    padding: 20px;
+  }
+
+  .counter-title {
+    font-size: 1.5rem;
   }
 }
